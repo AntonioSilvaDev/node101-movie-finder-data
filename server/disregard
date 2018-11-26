@@ -15,45 +15,48 @@ var cacheI = {};
 var cacheT = {};
 var i;
 var t;
+console.log(i);
+console.log(t);
 
-app.get('/', function(req, res){
-    if(!(req.query.i in cacheI) && req.query.i !== undefined){
+app.get('/', function(req, res){ 
+    console.log(req.query);
+    if(req.query.i !== i && req.query.i !== undefined){
         axios.get('http://www.omdbapi.com/', { params: { apiKey: '8730e0e', i: req.query.i}})   
                     .then(function(response) {
-                        cacheI[req.query.i] = response.data.Title;
+                        cacheI[req.query.i] = response.data;
                         i = req.query.i;
                         console.log('i am here');
-                        res.send(response.data.Title);
-                        })
+                        res.send(response.data);
+                    })
                     .catch(function(error){
                         console.log(error);
-                        }) 
-        }
-    else if (req.query.i in cacheI){
-        console.log(cacheI);
-        res.send(cacheI[req.query.i]);
-        } 
+                    }) 
+                }
+    else if (req.query.i === i && req.query.i !== undefined){
+        console.log('i am here 1');
+        res.send(cacheI);
+    } 
     else if (req.query.t !== t && req.query.t !== undefined) {
         axios.get('http://www.omdbapi.com/', { params: { apiKey: '8730e0e', t: req.query.t}})   
             .then(function(response) {
-                cacheT[req.query.t] = response.data;
+                cacheT = response.data;
                 t = req.query.t;
+                console.log('i am here 2');
                 res.send(response.data);
-                })
+            })
             .catch(function(error){
                 console.log(error);
-                }) 
+            }) 
         }
-    else if(req.query.t === t && req.query.t !== undefined){
+        else if(req.query.t === t && req.query.t !== undefined){
             console.log('i am here 3');
-            res.send(cacheT[req.query.t]);
+            res.send(cacheT);
         }  
-    else { 
-        if(req.query.t === undefined && req.query.i === undefined){
+        else { if(req.query.t === undefined && req.query.i === undefined){
             res.send('no parameters selected.  Please enter either I or T parameter');
             }
         }             
-    });
+            });
       
 //When making calls to the OMDB API make sure to append the '&apikey=8730e0e' parameter
 
@@ -62,4 +65,3 @@ module.exports = app;
 //  app.listen(3000, function() {
 //      console.log('Server is listening on http://localhost:3000');
 //      });
-
